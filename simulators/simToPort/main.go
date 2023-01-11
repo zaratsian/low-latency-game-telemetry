@@ -1,11 +1,11 @@
 package main
 
 import (
-	//"bytes"
 	"encoding/json"
 	"fmt"
 	"net"
 	"time"
+	"math/rand"
 )
 
 type GameEvent struct {
@@ -25,8 +25,11 @@ func main() {
 			EventID:   fmt.Sprintf("eid%010d", counter),
 			Timestamp: time.Now().Unix(),
 			EventType: "Spawn",
-			Data: map[string]string{
-				"key1": "value1",
+			Data: map[string]interface{}{
+				"playerid": fmt.Sprintf("eid%010d", rand.Intn(100)),
+				"x_coord": rand.Intn(90),
+				"y_coord": rand.Intn(90),
+				"z_coord": rand.Intn(90),
 			},
 		}
 

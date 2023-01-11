@@ -26,6 +26,7 @@ func main() {
 		}
 		defer ln.Close()
 
+		counter := 0
 		for {
 			conn, _ := ln.Accept()
 			go func(conn net.Conn) {
@@ -45,13 +46,16 @@ func main() {
 						fmt.Println("Error parsing json:", err)
 						return
 					}
+					counter++
 					// process payload for low-latency
 					fmt.Println("EventType:", ge.EventType)
 					fmt.Println("Timestamp:", ge.Timestamp)
 					fmt.Println("Data:", ge.Data)
 				}
-			}(conn)
 
+				fmt.Printf("Event Counter: %v\n",counter)
+
+			}(conn)
 
 		}
 	}()
