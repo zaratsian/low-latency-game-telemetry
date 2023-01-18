@@ -1,37 +1,42 @@
 package main
 
 import (
-    "log"
-    "net/http"
-
-    "github.com/gorilla/websocket"
+	"fmt"
+	"net"
+	"os"
 )
 
-var upgrader = websocket.Upgrader{}
-
 func main() {
-    http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-        conn, err := upgrader.Upgrade(w, r, nil)
-        if err != nil {
-            log.Println(err)
-            return
-        }
-        defer conn.Close()
+	// Listen for events from Agones
+	ln, err := net.Listen("tcp", ":27960")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer ln.Close()
 
-        for {
-            _, msg, err := conn.ReadMessage()
-            if err != nil {
-                log.Println(err)
-                break
-            }
-            log.Printf("Received message: %s", msg)
-			
-			//placeholder for data msg processing
-        }
-    })
+	for {
+		// Accept connections
+		conn, err := ln.Accept()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 
-    log.Println("Listening for game events on ws://localhost:8080/ws")
-    log.Fatal(http.ListenAndServe(":8080", nil))
+		go processData(conn)
+	}
 }
 
+func processData(conn net.Conn) {
+	data := make([]byte, 512)
+	_, err := conn.Read(data)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
+	fmt.Println("Received data:", string(data))
+	// TODO
+
+	conn.Close()
+}

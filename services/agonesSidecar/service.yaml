@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: agones-server-analytics-svc
+spec:
+  selector:
+    app: agones-server-analytics
+  ports:
+  - name: agones-server
+    port: 27960
+    targetPort: 27960
+  - name: analytics
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
