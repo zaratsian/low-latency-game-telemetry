@@ -49,6 +49,20 @@ func main() {
 					if err != nil {
 						break
 					}
+
+					// Process JSON data
+					var data map[string]interface{}
+					err = json.Unmarshal(buffer[:n], &data)
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+
+					if enablePrint {
+						fmt.Println(data)
+					}
+
+					/*
 					jsonData := buffer[:n]
 
 					var ge GameEvent
@@ -56,7 +70,6 @@ func main() {
 						fmt.Println("Error parsing json:", err)
 						return
 					}
-					counter++
 
 					if enablePrint {
 						// process payload for low-latency
@@ -64,6 +77,9 @@ func main() {
 						fmt.Println("Timestamp:", ge.Timestamp)
 						fmt.Println("Data:", ge.Data)
 					}
+					*/
+
+					counter++
 
 				}
 
