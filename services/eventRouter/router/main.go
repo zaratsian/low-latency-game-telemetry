@@ -14,9 +14,16 @@ import (
 	"cloud.google.com/go/spanner"
 )
 
-type Payload struct {
-	Data string `json:"data"`
-}
+// Define the JSON schema
+const schema = `{
+    "type": "object",
+    "properties": {
+        "name": { "type": "string" },
+        "age": { "type": "integer" },
+        "address": { "type": "string" }
+    },
+    "required": ["name", "age", "address"]
+}`
 
 func main() {
 
@@ -43,12 +50,14 @@ func main() {
 		fmt.Printf("\nRawdata: %v, %T\n", data, data)
 
 		// Write data to database (default = Spanner)
+		/*
 		err = spannerWriteDML(ctx, data)
 		if err != nil {
 			log.Print(err)
 		} else {
 			log.Print("Successfully wrote data to Spanner")
 		}
+		*/
 
 		// Send data to other sidecar container
 		/*
@@ -61,6 +70,23 @@ func main() {
 		   }
 		*/
 	}
+}
+
+func handleJSON(data []byte) {
+    var jsonData map[string]interface{}
+    json.Unmarshal(data, &jsonData)
+
+    // Check for schema integrity
+    err := json.Unmarshal([]byte(schema), &jsonData)
+    if err != nil {
+        log.Println("Error: Invalid JSON schema")
+        return
+    }
+
+    // Convert JSON data to human-readable sentence
+    sentence := "The name is " + jsonData["name"].(string) + ", age is " +
+        jsonData["age"].(string) + " and the address is " + jsonData["address"].(string)
+    fmt.Println(sentence)
 }
 
 func preProcessData(conn *net.UDPConn) (interface{}, error) {
