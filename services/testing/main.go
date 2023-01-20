@@ -10,10 +10,9 @@ import (
 
 var (
 	eventCount  int
-	startTime   time.Time
-	interval    = 10 * time.Second
-	wg          sync.WaitGroup
-	numRoutines = 1000
+	//startTime   time.Time
+	interval    = 5 * time.Second
+	numRoutines = 5000
 )
 
 type GameEvent struct {
@@ -24,19 +23,19 @@ type GameEvent struct {
 
 func main() {
 
-	startTime = time.Now()
+	//startTime = time.Now()
 
 	addr, _ := net.ResolveUDPAddr("udp", ":8080")
 	conn, _ := net.ListenUDP("udp", addr)
 	defer conn.Close()
 
+	wg := sync.WaitGroup{}
 	wg.Add(1)
-	go handleEvents(conn)
+	go handleEvents(conn, &wg)
 	wg.Wait()
 }
 
-func handleEvents(conn *net.UDPConn) {
-
+func handleEvents(conn *net.UDPConn, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	wg.Add(numRoutines)
@@ -63,7 +62,7 @@ func handleEvents(conn *net.UDPConn) {
 			}
 		}()
 	}
-
+	
 	ticker := time.NewTicker(interval)
 	for range ticker.C {
 		fmt.Printf("Events per second: %.3f\n", float64(eventCount)/interval.Seconds())
