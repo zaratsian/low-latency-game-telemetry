@@ -8,19 +8,19 @@ import (
 )
 
 func main() {
-	// UDP Listener
-	addr, err := net.ResolveUDPAddr("udp", ":8080")
-	if err != nil {
-		log.Fatal(err)
-	}
-	conn, err := net.ListenUDP("udp", addr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
+    udpAddr, err := net.ResolveUDPAddr("udp", ":8080")
+    if err != nil {
+        panic(err)
+    }
+
+    udpConn, err := net.ListenUDP("udp", udpAddr)
+    if err != nil {
+        panic(err)
+    }
+    defer udpConn.Close()
 
 	for {
-		processData(conn)
+		processData(udpConn)
 	}
 }
 

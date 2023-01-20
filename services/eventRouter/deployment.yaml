@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-sidecar-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-sidecar-app
+  template:
+    metadata:
+      labels:
+        app: my-sidecar-app
+    spec:
+      containers:
+      - name: json-router
+        image: gcr.io/my-project/json-router:latest
+        env:
+        - name: SPANNER_PROJECT
+          value: my-spanner-project
+        ports:
+        - containerPort: 8080
+      - name: data-processor
+        image: gcr.io/my-project/data-processor:latest
+        ports:
+        - containerPort: 8080

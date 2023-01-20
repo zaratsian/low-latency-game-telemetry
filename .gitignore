@@ -1,2 +1,7 @@
+.*
+!.gitignore
+*.iml
+terraform.tfstate*
+*.tfvars
 *.json
 config
