@@ -1,13 +1,11 @@
-module github.com/low-latency-game-telemetry/services/testing
+module github.com/low-latency-game-telemetry/services/spanner
 
 go 1.19
-
-replace github.com/low-latency-game-telemetry/spanner => ../spanner
 
 replace github.com/low-latency-game-telemetry/utils => ../utils
 
 require (
-	github.com/low-latency-game-telemetry/spanner v0.0.0-00010101000000-000000000000
+	cloud.google.com/go/spanner v1.43.0
 	github.com/low-latency-game-telemetry/utils v0.0.0-00010101000000-000000000000
 )
 
@@ -15,7 +13,6 @@ require (
 	cloud.google.com/go v0.107.0 // indirect
 	cloud.google.com/go/compute v1.14.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/spanner v1.43.0 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/cncf/udpa/go v0.0.0-20210930031921-04548b0d99d4 // indirect

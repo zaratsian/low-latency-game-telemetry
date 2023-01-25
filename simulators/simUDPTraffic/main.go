@@ -10,14 +10,14 @@ import (
 
 const (
 	simulations = 1000000
-	concurrency = 5000
+	concurrency = 200
 	timeDelay   = 1 // milliseconds
 )
 
 type GameEvent struct {
-	Eventid    string
-	Playerid   string
-	Score      float64
+	Eventid  string
+	Playerid string
+	Score    float64
 }
 
 var wg sync.WaitGroup

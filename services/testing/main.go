@@ -1,18 +1,23 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/low-latency-game-telemetry/spanner"
+	"github.com/low-latency-game-telemetry/utils"
 )
 
 var (
-	eventCount  int
-	//startTime   time.Time
-	interval    = 5 * time.Second
-	numRoutines = 5000
+	eventCount int
+	interval    = 2 * time.Second
+	numRoutines = 200
+	writeToSpanner = false
 )
 
 type GameEvent struct {
@@ -22,8 +27,6 @@ type GameEvent struct {
 }
 
 func main() {
-
-	//startTime = time.Now()
 
 	addr, _ := net.ResolveUDPAddr("udp", ":8080")
 	conn, _ := net.ListenUDP("udp", addr)
@@ -37,6 +40,8 @@ func main() {
 
 func handleEvents(conn *net.UDPConn, wg *sync.WaitGroup) {
 	defer wg.Done()
+
+	ctx := context.Background()
 
 	wg.Add(numRoutines)
 
@@ -58,11 +63,19 @@ func handleEvents(conn *net.UDPConn, wg *sync.WaitGroup) {
 				// Process Event
 				//go processEvent(ge)
 
+				if writeToSpanner {
+					key_string, value_string := utils.FormatStruct(ge)
+					err := spanner.SpannerWriteDML(ctx, key_string, value_string)
+					if err != nil {
+						log.Printf("Error when writing to Spanner. %v\n", err)
+					}
+				}
+
 				eventCount++
 			}
 		}()
 	}
-	
+
 	ticker := time.NewTicker(interval)
 	for range ticker.C {
 		fmt.Printf("Events per second: %.3f\n", float64(eventCount)/interval.Seconds())
@@ -70,9 +83,9 @@ func handleEvents(conn *net.UDPConn, wg *sync.WaitGroup) {
 	}
 }
 
-func processEvent(ge GameEvent) {
+func processEvent(ge GameEvent) bool {
 	// Process Event
-	eventCount++
+	return true
 }
 
 func (ge GameEvent) validate() bool {
