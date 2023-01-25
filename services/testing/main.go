@@ -21,10 +21,20 @@ var (
 )
 
 type GameEvent struct {
+	Eventid  string 	`json:"eventid"`
+	Datetime string 	`json:"datetime"`
+	Playerid string		`json:"playerid"`
+	Event string        `json:"event"`
+	Score float64       `json:"score"`
+}
+
+/*
+type GameEvent struct {
 	Eventid  string
 	Playerid string
 	Score    float64
 }
+*/
 
 func main() {
 
